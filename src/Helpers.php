@@ -56,6 +56,8 @@ class Helpers {
 				$file_name .= '.' . $extension;
 			}
 		}
+		
+		$file_name .= '.' . 'local';
 
 		/**
 		 * Custom Events needs to be enabled, if Revenue Tracking is enabled and any of the available integrations are available.

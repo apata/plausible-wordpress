@@ -1,0 +1,70 @@
+# Commands
+
+## Start containers
+# docker compose up -d
+
+## Install Wordpress
+# docker compose run --rm wp core install --url=localhost:8081 --title=Example --admin_user=supervisor --admin_password=user@example.com --admin_email=user@example.com
+
+## Download latest version of this plugin from the official repository
+# docker compose run --rm wp plugin install plausible-analytics
+
+## ...edit plugin files in this repo
+
+## Copy edited plugin files to container & set correct permissions
+# docker compose cp . wordpress:/var/www/html/wp-content/plugins/plausible-analytics
+# docker compose exec -it --user root wordpress chown -R www-data:www-data /var/www/html/wp-content/plugins/plausible-analytics
+
+## Configure the plugin manually in http://localhost:8081/wp-admin/plugins.php, using a production Plausible site that you own as the domain (WIP: support plausible CE running locally)
+
+## Stopping / day over
+# docker compose down
+
+## Full cleanup
+# docker compose down --remove-orphans -v
+
+
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: plausibledemo
+      WORDPRESS_DB_PASSWORD: plausibledemo
+      WORDPRESS_DB_NAME: plausibledemo
+    volumes:
+      - wordpress:/var/www/html
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: plausibledemo
+      MYSQL_USER: plausibledemo
+      MYSQL_PASSWORD: plausibledemo
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+  wp:
+    image: wordpress:cli
+    user: 33:33
+    depends_on:
+      - db
+      - wordpress
+    volumes:
+      - wordpress:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: wp
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: plausibledemo
+      WORDPRESS_DB_USER: plausibledemo
+      WORDPRESS_DB_PASSWORD: plausibledemo
+
+volumes:
+  wordpress:
+  db:
