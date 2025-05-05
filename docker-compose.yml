@@ -6,8 +6,11 @@
 ## Install Wordpress
 # docker compose run --rm wp core install --url=localhost:8081 --title=Example --admin_user=supervisor --admin_password=user@example.com --admin_email=user@example.com
 
-## Download latest version of this plugin from the official repository
+## Download latest version of this plugin from the official repository so as not to need to install PHP dependencies in this repo
 # docker compose run --rm wp plugin install plausible-analytics
+
+## If you want to work against a local Plausible CE instance, you need to set the following constants in wp-config.php. This is not needed if you are using a production Plausible site as the domain.
+# docker compose run --rm wp config set PLAUSIBLE_ANALYTICS_API_DOMAIN http://host.docker.internal:8000 && docker compose run --rm wp config set PLAUSIBLE_ANALYTICS_DOMAIN http://localhost:8000
 
 ## ...edit plugin files in this repo
 

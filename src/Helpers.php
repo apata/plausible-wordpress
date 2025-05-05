@@ -226,18 +226,26 @@ class Helpers {
 	 *
 	 * @return string
 	 */
-	public static function get_hosted_domain_url() {
+	public static function get_hosted_domain_url( $api = false ) {
 		$settings = self::get_settings();
-
+		
 		if ( defined( 'PLAUSIBLE_SELF_HOSTED_DOMAIN' ) ) {
-			return esc_url( 'https://' . PLAUSIBLE_SELF_HOSTED_DOMAIN ); // @codeCoverageIgnore
+			return esc_url( 'http://' . PLAUSIBLE_SELF_HOSTED_DOMAIN ); // @codeCoverageIgnore
 		}
 
 		if ( ! empty( $settings[ 'self_hosted_domain' ] ) ) {
 			/**
 			 * Until proven otherwise, let's just assume people are all on SSL.
 			 */
-			return esc_url( 'https://' . $settings[ 'self_hosted_domain' ] );
+			return esc_url( 'http://' . $settings[ 'self_hosted_domain' ] );
+		}
+
+		if ( defined( 'PLAUSIBLE_ANALYTICS_DOMAIN' ) ) {
+			return esc_url( PLAUSIBLE_ANALYTICS_DOMAIN ); // @codeCoverageIgnore
+		}
+
+		if ( $api && defined( 'PLAUSIBLE_ANALYTICS_API_DOMAIN' ) ) {
+			return esc_url( PLAUSIBLE_ANALYTICS_API_DOMAIN ); // @codeCoverageIgnore
 		}
 
 		return esc_url( 'https://plausible.io' );
